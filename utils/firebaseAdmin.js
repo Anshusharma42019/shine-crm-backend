@@ -1,5 +1,5 @@
 import admin from "firebase-admin";
-import serviceAccount from "../crms-7ec70-firebase-adminsdk-fbsvc-f54bed5566.json" assert { type: "json" };
+import serviceAccount from JSON.parse(process.env.FIREBASE_CONFIG)
 
 if (!admin.apps.length) {
   admin.initializeApp({

@@ -19,7 +19,7 @@ const port = process.env.PORT || 5000;
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
-  "https://shine-crm-noti.vercel.app",
+  "https://client-crm-sigma.vercel.app",
 ];
 
 await connectDB();

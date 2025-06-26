@@ -1,9 +1,14 @@
 import admin from "firebase-admin";
 
-// ✅ Parse FIREBASE_CONFIG only if defined
 let serviceAccount = {};
+
 try {
   serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG || "{}");
+
+  // 🔧 Important: replace escaped newline characters in private_key
+  if (serviceAccount.private_key) {
+    serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+  }
 } catch (err) {
   console.error("❌ Invalid FIREBASE_CONFIG format:", err);
 }

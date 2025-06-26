@@ -4,8 +4,8 @@ let serviceAccount = {};
 
 try {
   serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG || "{}");
-
-  // 🔧 Important: replace escaped newline characters in private_key
+  console.log(serviceAccount);
+  
   if (serviceAccount.private_key) {
     serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
   }
@@ -19,9 +19,11 @@ if (!admin.apps.length) {
   });
 }
 
+// ✅ Send push that works in both foreground (data) & background (notification)
 export const sendPushNotification = async (token, title, body) => {
   const message = {
-    notification: { title, body },
+    notification: { title, body }, // for background via service worker
+    data: { title, body },         // for foreground in web app
     token,
   };
 

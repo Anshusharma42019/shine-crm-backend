@@ -22,8 +22,7 @@ if (!admin.apps.length) {
 // ✅ Send push that works in both foreground (data) & background (notification)
 export const sendPushNotification = async (token, title, body) => {
   const message = {
-    notification: { title, body }, // for background via service worker
-    data: { title, body },         // for foreground in web app
+    notification: { title, body }, // 👈 this ensures visible browser notification
     token,
   };
 
@@ -36,3 +35,4 @@ export const sendPushNotification = async (token, title, body) => {
     throw error;
   }
 };
+

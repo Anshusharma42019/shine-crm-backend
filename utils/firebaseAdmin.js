@@ -1,5 +1,12 @@
 import admin from "firebase-admin";
-import serviceAccount from JSON.parse(process.env.FIREBASE_CONFIG)
+
+// ✅ Parse FIREBASE_CONFIG only if defined
+let serviceAccount = {};
+try {
+  serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG || "{}");
+} catch (err) {
+  console.error("❌ Invalid FIREBASE_CONFIG format:", err);
+}
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -9,10 +16,7 @@ if (!admin.apps.length) {
 
 export const sendPushNotification = async (token, title, body) => {
   const message = {
-    notification: {
-      title,
-      body,
-    },
+    notification: { title, body },
     token,
   };
 
@@ -21,7 +25,7 @@ export const sendPushNotification = async (token, title, body) => {
     console.log("✅ Push notification sent:", response);
     return response;
   } catch (error) {
-    console.error("❌ Error sending push:", error);
+    console.error("❌ Error sending push notification:", error);
     throw error;
   }
 };

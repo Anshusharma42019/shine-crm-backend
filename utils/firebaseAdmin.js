@@ -1,10 +1,10 @@
 import admin from "firebase-admin";
+import FirebaseToken from "../models/FirebaseToken.js"; 
 
 let serviceAccount = {};
 
 try {
   serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG || "{}");
-  console.log(serviceAccount);
   
   if (serviceAccount.private_key) {
     serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
@@ -20,19 +20,27 @@ if (!admin.apps.length) {
 }
 
 // ✅ Send push that works in both foreground (data) & background (notification)
-export const sendPushNotification = async (token, title, body) => {
-  const message = {
-    notification: { title, body }, // 👈 this ensures visible browser notification
-    token,
-  };
 
+export const sendPushNotification = async (token, payload) => {
   try {
-    const response = await admin.messaging().send(message);
+    const response = await admin.messaging().send({
+      token,
+      notification: {
+        title: payload.title,
+        body: payload.body,
+      },
+      data: payload.data || {}, // optional custom data
+    });
+
     console.log("✅ Push notification sent:", response);
-    return response;
-  } catch (error) {
-    console.error("❌ Error sending push notification:", error);
-    throw error;
+  } catch (err) {
+    if (err.code === "messaging/registration-token-not-registered") {
+      console.log(`🗑️ Removing invalid token: ${token}`);
+      await FirebaseToken.deleteOne({ token });
+    } else {
+      console.error("❌ Error sending push notification:", err);
+    }
   }
 };
+
 

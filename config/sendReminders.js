@@ -1,4 +1,3 @@
-// server/config/sendReminders.js
 import cron from "node-cron";
 import dotenv from "dotenv";
 import Lead from "../models/Lead.js";
@@ -12,10 +11,8 @@ const isSameDay = (d1, d2) =>
   d1.getMonth() === d2.getMonth() &&
   d1.getDate() === d2.getDate();
 
-// 🔁 Run every hour
-cron.schedule("0 * * * *", async () => {
-  console.log("⏰ Cron running: checking leads for upcoming meetings...");
-
+// 🧠 Move all logic into a reusable function
+const runReminderLogic = async () => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -52,7 +49,14 @@ cron.schedule("0 * * * *", async () => {
       if (message) {
         for (const { token } of tokens) {
           try {
-            await sendPushNotification(token, "CRM Reminder", message);
+            await sendPushNotification(token, {
+              title: "CRM Reminder",
+              body: message,
+              data: {
+                leadId: lead._id.toString(),
+                name: lead.name,
+              },
+            });
             console.log("✅ Sent to token:", token);
           } catch (err) {
             console.error("❌ Failed to send to token:", token, err.message);
@@ -61,6 +65,19 @@ cron.schedule("0 * * * *", async () => {
       }
     }
   } catch (err) {
-    console.error("❌ Cron job error:", err.message);
+    console.error("❌ Error in reminder logic:", err.message);
   }
+};
+
+// 🕐 Cron job scheduled at 14:51 IST daily
+cron.schedule("55 14 * * *", async () => {
+  console.log("⏰ Cron running at:", new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }));
+  try {
+    await runReminderLogic();
+  } catch (err) {
+    console.error("❌ Cron execution error:", err.message);
+  }
+}, {
+  timezone: "Asia/Kolkata",
 });
+

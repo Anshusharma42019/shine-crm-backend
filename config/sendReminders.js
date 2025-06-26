@@ -70,7 +70,7 @@ const runReminderLogic = async () => {
 };
 
 // 🕐 Cron job scheduled at 14:51 IST daily
-cron.schedule("59 14 * * *", async () => {
+cron.schedule("04 15 * * *", async () => {
   console.log("⏰ Cron running at:", new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }));
   try {
     await runReminderLogic();

@@ -9,15 +9,15 @@ let serviceAccount = {};
 try {
   serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG || "{}");
 
-  // Fix newline escape characters in private key
+  // Fix escaped newlines in private key
   if (serviceAccount.private_key) {
     serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
   }
 } catch (err) {
-  console.error("❌ Invalid FIREBASE_CONFIG format:", err);
+  console.error("❌ Invalid FIREBASE_CONFIG format:", err.message);
 }
 
-// 🚀 Initialize Firebase Admin SDK (only once)
+// 🚀 Initialize Firebase Admin SDK only once
 if (!admin.apps.length) {
   try {
     admin.initializeApp({
@@ -43,12 +43,12 @@ export const sendPushNotification = async (token, payload) => {
 
     console.log("✅ Push notification sent:", response);
   } catch (err) {
-    // 🗑️ Remove token if it's invalid
+    // 🗑️ Clean up invalid tokens
     if (err.code === "messaging/registration-token-not-registered") {
       console.warn(`🗑️ Removing invalid FCM token: ${token}`);
       await FirebaseToken.deleteOne({ token });
     } else {
-      console.error("❌ Error sending push notification:", err);
+      console.error("❌ Error sending push notification:", err.message);
     }
   }
 };

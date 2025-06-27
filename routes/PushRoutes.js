@@ -19,7 +19,7 @@ router.post("/register", async (req, res) => {
     res.status(500).json({ error: "Failed to save token" });
   }
 });
-
+ 
 // Manual test push
 router.post("/send", async (req, res) => {
   const { title, body } = req.body;

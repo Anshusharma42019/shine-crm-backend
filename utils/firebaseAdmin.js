@@ -47,6 +47,9 @@ export const sendPushNotification = async (token, payload) => {
     if (err.code === "messaging/registration-token-not-registered") {
       console.warn(`🗑️ Removing invalid FCM token: ${token}`);
       await FirebaseToken.deleteOne({ token });
+    }  else if (err.message.includes("SenderId mismatch")) {
+      console.warn(`🗑️ Removing token due to SenderId mismatch: ${token}`);
+      await FirebaseToken.deleteOne({ token });
     } else {
       console.error("❌ Error sending push notification:", err.message);
     }

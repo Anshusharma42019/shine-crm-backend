@@ -1,18 +1,17 @@
-import cron from "node-cron";
-import dotenv from "dotenv";
+// routes/pushReminder.js
+import express from "express";
 import Lead from "../models/Lead.js";
 import FirebaseToken from "../models/FirebaseToken.js";
 import { sendPushNotification } from "../utils/firebaseAdmin.js";
 
-dotenv.config();
+const router = express.Router();
 
 const isSameDay = (d1, d2) =>
   d1.getFullYear() === d2.getFullYear() &&
   d1.getMonth() === d2.getMonth() &&
   d1.getDate() === d2.getDate();
 
-// 🧠 Move all logic into a reusable function
-const runReminderLogic = async () => {
+router.post("/reminder", async (req, res) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -32,7 +31,7 @@ const runReminderLogic = async () => {
 
     const tokens = await FirebaseToken.find();
 
-    console.log(`📅 Matched leads: ${leads.length} | 📲 Tokens: ${tokens.length}`);
+    console.log(`📅 Leads: ${leads.length} | 📲 Tokens: ${tokens.length}`);
 
     for (const lead of leads) {
       const meetingDate = new Date(lead.meetingDate);
@@ -52,32 +51,21 @@ const runReminderLogic = async () => {
             await sendPushNotification(token, {
               title: "CRM Reminder",
               body: message,
-              data: {
-                leadId: lead._id.toString(),
-                name: lead.name,
-              },
+              data: { leadId: lead._id.toString(), name: lead.name },
             });
-            console.log("✅ Sent to token:", token);
+            console.log("✅ Sent:", token);
           } catch (err) {
-            console.error("❌ Failed to send to token:", token, err.message);
+            console.error("❌ Failed:", token, err.message);
           }
         }
       }
     }
-  } catch (err) {
-    console.error("❌ Error in reminder logic:", err.message);
-  }
-};
 
-// 🕐 Cron job scheduled at 14:51 IST daily
-cron.schedule("55 15 * * *", async () => {
-  console.log("⏰ Cron running at:", new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }));
-  try {
-    await runReminderLogic();
+    res.status(200).json({ message: "Reminders processed" });
   } catch (err) {
-    console.error("❌ Cron execution error:", err.message);
+    console.error("❌ Error:", err.message);
+    res.status(500).json({ error: "Reminder logic failed" });
   }
-}, {
-  timezone: "Asia/Kolkata",
 });
 
+export default router;

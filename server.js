@@ -10,7 +10,9 @@ import projectRoutes from "./routes/ProjectRoutes.js";
 import leadRoutes from "./routes/LeadRoutes.js";
 import employeeRoutes from "./routes/EmployeeRoutes.js";
 import pushRoutes from './routes/PushRoutes.js';
-import "./config/sendReminders.js"
+//import "./config/sendReminders.js"
+import pushReminderRouter from "./routes/PushReminder.js";
+
 dotenv.config()
 const app = express();
 const port = process.env.PORT || 5000;
@@ -39,6 +41,7 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/leads", leadRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use("/api/push", pushRoutes);
+app.use("/api/push", pushReminderRouter);
 
 app.get("/", (req, res) => {
   res.send("API is working..");

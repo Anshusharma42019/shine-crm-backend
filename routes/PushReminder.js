@@ -11,7 +11,7 @@ const isSameDay = (d1, d2) =>
   d1.getMonth() === d2.getMonth() &&
   d1.getDate() === d2.getDate();
 
-router.post("/reminder", async (req, res) => {
+router.get("/reminder", async (req, res) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 

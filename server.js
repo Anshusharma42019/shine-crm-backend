@@ -35,7 +35,6 @@ app.use(cors({ origin: allowedOrigins, credentials: true }));
 // }));
 
 // Routes
-app.get("/api/cron", cronHandler);
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);

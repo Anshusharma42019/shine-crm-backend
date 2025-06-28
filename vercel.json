@@ -2,16 +2,16 @@
   "version": 2,
   "builds": [
     { "src": "server.js", "use": "@vercel/node" },
-    { "src": "api/cronJob.js", "use": "@vercel/node" }
+    { "src": "api/cron-job.js", "use": "@vercel/node" }
   ],
   "routes": [
-    { "src": "/cron-job", "dest": "api/cronJob.js" },
+    { "src": "/api/cron-job", "dest": "api/cron-job.js" },
     { "src": "/(.*)", "dest": "server.js" }
   ],
   "crons": [
     {
-      "path": "/cron-job",
-      "schedule": "07 17 * * *"
+      "path": "/api/cron-job",
+      "schedule": "51 12 * * *"
     }
   ]
 }

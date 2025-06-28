@@ -3,7 +3,6 @@ import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import cors from "cors";
 import "dotenv/config";
-import cronHandler from "./api/cron.js";
 //import fileUpload from "express-fileupload";
 import adminRoutes from "./routes/AdminRoutes.js";
 import authRoutes from "./routes/AuthRoutes.js";

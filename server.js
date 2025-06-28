@@ -3,6 +3,7 @@ import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import cors from "cors";
 import "dotenv/config";
+import cronHandler from "./api/cron.js";
 //import fileUpload from "express-fileupload";
 import adminRoutes from "./routes/AdminRoutes.js";
 import authRoutes from "./routes/AuthRoutes.js";
@@ -34,6 +35,7 @@ app.use(cors({ origin: allowedOrigins, credentials: true }));
 // }));
 
 // Routes
+app.get("/api/cron", cronHandler);
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);

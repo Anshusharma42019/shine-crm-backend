@@ -12,6 +12,7 @@ import employeeRoutes from "./routes/EmployeeRoutes.js";
 import invoiceRoutes from "./routes/InvoiceRoutes.js";
 import pushRoutes from "./routes/PushRoutes.js";
 import monthlyProjectRouter from "./routes/MonthlyProjectDetailsRoutes.js";
+import OfficeExpenseRoutes from "./routes/officeExpenseRoutes.js";
 
 //import "./config/sendReminders.js"
 dotenv.config();
@@ -44,6 +45,7 @@ app.use("/api/employees", employeeRoutes);
 app.use("/api/push", pushRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/monthly-projects", monthlyProjectRouter);
+app.use("/api/office-expenses", OfficeExpenseRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is working..");

@@ -24,7 +24,8 @@ const port = process.env.PORT || 5000;
 // Allowed Origins
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://shine-crm-backend.vercel.app",
+  "http://localhost:5174",
+  "https://shine-crm-backend.vercel.app/",
   "https://shine-crm-frontend.vercel.app",
 ];
 

@@ -13,6 +13,8 @@ import invoiceRoutes from "./routes/InvoiceRoutes.js";
 import pushRoutes from "./routes/PushRoutes.js";
 import monthlyProjectRouter from "./routes/MonthlyProjectDetailsRoutes.js";
 import OfficeExpenseRoutes from "./routes/officeExpenseRoutes.js";
+import attendanceRoutes from "./routes/AttendanceRoutes.js";
+import taskRoutes from "./routes/TaskRoutes.js";
 
 //import "./config/sendReminders.js"
 dotenv.config();
@@ -46,6 +48,8 @@ app.use("/api/push", pushRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/monthly-projects", monthlyProjectRouter);
 app.use("/api/office-expenses", OfficeExpenseRoutes);
+app.use("/api/attendance", attendanceRoutes);
+app.use("/api/tasks", taskRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is working..");

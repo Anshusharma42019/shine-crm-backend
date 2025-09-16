@@ -22,10 +22,24 @@ export const timeIn = async (req, res) => {
       date: today
     });
 
-    if (existingAttendance) {
+    if (existingAttendance && !existingAttendance.time_out) {
       return res.status(400).json({
         success: false,
         message: 'Already timed in today'
+      });
+    }
+
+    // If already checked out, allow check-in again
+    if (existingAttendance && existingAttendance.time_out) {
+      existingAttendance.time_out = null;
+      existingAttendance.time_in = new Date();
+      existingAttendance.status = 'Present';
+      await existingAttendance.save();
+      
+      return res.status(200).json({
+        success: true,
+        data: existingAttendance,
+        message: 'Checked in again successfully'
       });
     }
 

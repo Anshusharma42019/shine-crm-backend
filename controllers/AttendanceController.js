@@ -29,10 +29,20 @@ export const timeIn = async (req, res) => {
       });
     }
 
+    const timeIn = new Date();
+    const hour = timeIn.getHours();
+    const minute = timeIn.getMinutes();
+    
+    let status = 'Present';
+    if (hour > 9 || (hour === 9 && minute > 30)) {
+      status = 'Late';
+    }
+
     const attendance = new Attendance({
       employee_id,
       date: today,
-      time_in: new Date()
+      time_in: timeIn,
+      status
     });
 
     await attendance.save();
@@ -82,6 +92,54 @@ export const timeOut = async (req, res) => {
       success: true,
       data: attendance,
       message: 'Time out recorded successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// Checkout
+export const checkout = async (req, res) => {
+  try {
+    const { employee_id } = req.body;
+    const today = new Date().setHours(0, 0, 0, 0);
+
+    const attendance = await Attendance.findOne({
+      employee_id,
+      date: today
+    });
+
+    if (!attendance) {
+      return res.status(404).json({
+        success: false,
+        message: 'No check-in record found for today'
+      });
+    }
+
+    if (attendance.time_out) {
+      return res.status(400).json({
+        success: false,
+        message: 'Already checked out today'
+      });
+    }
+
+    const timeOut = new Date();
+    attendance.time_out = timeOut;
+    
+    const workHours = (timeOut - attendance.time_in) / (1000 * 60 * 60);
+    if (workHours < 4) {
+      attendance.status = 'Half Day';
+    }
+    
+    await attendance.save();
+
+    res.status(200).json({
+      success: true,
+      data: attendance,
+      message: 'Checkout recorded successfully'
     });
   } catch (error) {
     res.status(500).json({

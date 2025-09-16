@@ -89,6 +89,77 @@ export const getTasks = async (req, res) => {
   }
 };
 
+// Get single task
+export const getTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const task = await Task.findById(id)
+      .populate('assigned_to', 'name employee_id')
+      .populate('assigned_by', 'name');
+
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: 'Task not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: task
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// Update task
+export const updateTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, assigned_to, priority, due_date } = req.body;
+
+    // Check if employee exists when updating assigned_to
+    if (assigned_to) {
+      const employee = await Employee.findById(assigned_to);
+      if (!employee) {
+        return res.status(404).json({
+          success: false,
+          message: 'Employee not found'
+        });
+      }
+    }
+
+    const task = await Task.findByIdAndUpdate(
+      id,
+      { title, description, assigned_to, priority, due_date },
+      { new: true, runValidators: true }
+    ).populate(['assigned_to', 'assigned_by']);
+
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: 'Task not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: task,
+      message: 'Task updated successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 // Update task status
 export const updateTaskStatus = async (req, res) => {
   try {

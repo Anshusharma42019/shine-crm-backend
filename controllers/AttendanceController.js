@@ -133,17 +133,18 @@ export const checkout = async (req, res) => {
       });
     }
 
-    if (attendance.time_out) {
+    if (attendance.checkout_time) {
       return res.status(400).json({
         success: false,
-        message: 'Already checked out today'
+        message: 'Already manually checked out today'
       });
     }
 
-    const timeOut = new Date();
-    attendance.time_out = timeOut;
+    const checkoutTime = new Date();
+    attendance.checkout_time = checkoutTime;
     
-    const workHours = (timeOut - attendance.time_in) / (1000 * 60 * 60);
+    // Use checkout_time for work hours calculation if manually checking out
+    const workHours = (checkoutTime - attendance.time_in) / (1000 * 60 * 60);
     if (workHours < 4) {
       attendance.status = 'Half Day';
     }
